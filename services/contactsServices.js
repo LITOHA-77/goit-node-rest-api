@@ -1,6 +1,10 @@
 import Contact from '../models/Contact.js';
 
-export const listContacts = () => Contact.find({}, '-createdAt -updatedAt');
+export const listContacts = (filter = {}, query = {}) =>
+  Contact.find(filter, '-createdAt -updatedAt', query).populate(
+    'owner',
+    'name email'
+  );
 
 export const getContactById = id => Contact.findById(id);
 
