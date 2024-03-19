@@ -6,10 +6,6 @@ import { emailRegexp } from '../constants/auth-constants.js';
 
 const userSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Name is required'],
-    },
     password: {
       type: String,
       minlength: 6,

@@ -20,8 +20,10 @@ const register = async (req, res) => {
     throw HttpError(404, 'Not found');
   }
   res.status(201).json({
-    email: newUser.email,
-    subscription: newUser.subscription,
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+    },
   });
 };
 
@@ -72,9 +74,18 @@ const logout = async (req, res) => {
   res.status(204).json();
 };
 
+const updateSubscriptionUsers = async (req, res) => {
+  const { _id } = req.user;
+  const { subscription } = req.body;
+  await authServices.updateSubscription(_id, { subscription });
+
+  res.status(200).json({ message: `Subscription changed to ${subscription}` });
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  updateSubscriptionUsers: ctrlWrapper(updateSubscriptionUsers),
 };

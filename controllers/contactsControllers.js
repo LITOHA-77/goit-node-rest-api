@@ -6,18 +6,28 @@ import ctrlWrapper from '../decorator/ctrlWrapper.js';
 
 const getAllContacts = async (req, res) => {
   const { _id: owner } = req.user;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, favorite } = req.query;
   const skip = (page - 1) * limit;
-  const result = await contactsService.listContacts({ owner }, { skip, limit });
+
+  const result = await contactsService.listContacts(
+    { owner, favorite },
+    {
+      skip,
+      limit,
+    }
+  );
+
   if (!result) {
     throw HttpError(404);
   }
+
   res.status(200).json(result);
 };
 
 const getOneContact = async (req, res) => {
   const { id } = req.params;
-  const result = await contactsService.getContactById(id);
+  const { _id: owner } = req.user;
+  const result = await contactsService.getContactById({ _id: id, owner });
   if (!result) {
     throw HttpError(404);
   }
@@ -26,7 +36,8 @@ const getOneContact = async (req, res) => {
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
-  const result = await contactsService.removeContact(id);
+  const { _id: owner } = req.user;
+  const result = await contactsService.removeContact({ _id: id, owner });
   if (!result) {
     throw HttpError(404);
   }
@@ -42,7 +53,11 @@ const createContact = async (req, res) => {
 
 const updateContact = async (req, res) => {
   const { id } = req.params;
-  const result = await contactsService.updateContact(id, req.body);
+  const { _id: owner } = req.user;
+  const result = await contactsService.updateContact(
+    { _id: id, owner },
+    req.body
+  );
   if (!result) {
     throw HttpError(404);
   }
@@ -51,7 +66,11 @@ const updateContact = async (req, res) => {
 
 const updateStatusContact = async (req, res) => {
   const { id } = req.params;
-  const result = await contactsService.updateStatusContact(id, req.body);
+  const { _id: owner } = req.user;
+  const result = await contactsService.updateStatusContact(
+    { _id: id, owner },
+    req.body
+  );
   if (!result) {
     throw HttpError(404, `contact ${id} Not found`);
   }
