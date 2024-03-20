@@ -10,7 +10,8 @@ const getAllContacts = async (req, res) => {
   const skip = (page - 1) * limit;
 
   const result = await contactsService.listContacts(
-    { owner, favorite },
+    // { owner, favorite },
+    favorite ? { $and: [{ owner }, { favorite }] } : { owner },
     {
       skip,
       limit,
@@ -27,7 +28,7 @@ const getAllContacts = async (req, res) => {
 const getOneContact = async (req, res) => {
   const { id } = req.params;
   const { _id: owner } = req.user;
-  const result = await contactsService.getContactById({ _id: id, owner });
+  const result = await contactsService.getContact({ _id: id, owner });
   if (!result) {
     throw HttpError(404);
   }
